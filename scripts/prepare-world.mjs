@@ -6,10 +6,12 @@ import { featuredProjects } from '../src/profile.js'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const source = path.join(root, 'reference-assets/sebastien-lempens')
+const avatar = path.join(root, 'custom-assets/avatar/model.glb')
 // Give every adapted runtime a new URL, including its imported modules and CSS.
 // Fixed upstream filenames otherwise let a browser combine two deployments.
 const fingerprint = createHash('sha256')
 for (const file of ['scripts/prepare-world.mjs', 'src/profile.js', 'src/world/bridge.js', 'src/world/bootstrap.js', 'src/world/world.css']) fingerprint.update(await readFile(path.join(root, file)))
+fingerprint.update(await readFile(avatar))
 const revision = fingerprint.digest('hex').slice(0, 12)
 const generatedRoot = path.resolve(root, 'public/world')
 if (path.relative(root, generatedRoot).replaceAll('\\', '/') !== 'public/world') throw new Error('Unsafe generated directory')
@@ -21,6 +23,9 @@ await writeFile(path.join(generatedRoot, 'index.html'), `<!doctype html><html la
 for (const folder of ['assets', 'gltf', 'texture', 'hdri', 'sounds', 'fonts', 'image', 'vendors', '_external']) {
   await cp(path.join(source, folder), path.join(output, folder), { recursive: true })
 }
+// The approved avatar keeps the original scene nodes, skeletons and animation clips.
+// Override only the generated bundle so the captured source remains reproducible.
+await cp(avatar, path.join(output, 'gltf/model.glb'))
 
 // Keep the captured scene intact. Apply small, checked integration patches to the generated copy.
 async function patch(name, replacements) {

@@ -15,6 +15,14 @@ test('original loader and world use personal CV and GitHub content', async ({ pa
   await page.waitForTimeout(3500)
   await page.screenshot({ path: 'artifacts/original-home.png' })
   const frame = page.frames().find(f => f.url().includes('/world/'))
+  const avatar = await frame.evaluate(async () => {
+    const state = (await import('./assets/index-DjXkBzPf.js')).aM.getState()
+    const hair = state.mesh_sebastien.getObjectByName('Abhishek_Hair')
+    return { hair: Boolean(hair?.isSkinnedMesh), material: hair?.material.name, animations: state.mesh_animations.map(clip => clip.name) }
+  })
+  expect(avatar.hair).toBe(true)
+  expect(avatar.material).toBe('Abhishek black hair')
+  expect(avatar.animations).toEqual(expect.arrayContaining(['action-drive-stop', 'action-fly', 'action-slide', 'action-wait']))
   await frame.locator('body').click({ position: { x: 100, y: 200 } })
   await frame.locator('body').press('ArrowDown')
   await expect.poll(() => frame.evaluate(async () => (await import('./assets/index-DjXkBzPf.js')).aN.getState().scroll)).toBeGreaterThan(.005)
