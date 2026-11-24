@@ -5,16 +5,16 @@ import { G, HOT, M } from './materials.js'
 import { arcFraction, ribbon, road, roadLength, tOf } from './layout.js'
 import { live } from '../store.js'
 
-const edgeMaterial = new THREE.MeshBasicMaterial({ color: '#8f8adf', side: THREE.DoubleSide })
+const kerb = new THREE.MeshStandardMaterial({ color: '#efe9f6', roughness: 0.9 })
 const dashMaterial = new THREE.MeshBasicMaterial({ toneMapped: false })
-const UNLIT = new THREE.Color('#6f69d6')
+const UNLIT = new THREE.Color('#e9e2f2')
 
-/* The asphalt, its edge lines, and centre dashes that stay lit behind the
-   scooter, so the road already travelled reads as a warm trail. */
+/* The street: asphalt, a pavement and kerb on each side, and centre dashes
+   that stay lit behind the scooter, so the distance covered reads as a warm trail. */
 export default function Road() {
   const lit = useRef(-1)
 
-  const { asphalt, left, right, dashes, count } = useMemo(() => {
+  const { strips, dashes, count } = useMemo(() => {
     const count = Math.floor(roadLength / 3.6)
     const dashes = new THREE.InstancedMesh(G.box, dashMaterial, count)
     const dummy = new THREE.Object3D()
@@ -24,8 +24,8 @@ export default function Road() {
       const u = (i + 0.5) / count
       road.getPointAt(u, P)
       road.getTangentAt(u, T)
-      dummy.position.set(P.x, 0.025, P.z)
-      dummy.lookAt(P.x + T.x, 0.025, P.z + T.z)
+      dummy.position.set(P.x, 0.03, P.z)
+      dummy.lookAt(P.x + T.x, 0.03, P.z + T.z)
       dummy.scale.set(0.16, 0.02, 1.5)
       dummy.updateMatrix()
       dashes.setMatrixAt(i, dummy.matrix)
@@ -33,10 +33,15 @@ export default function Road() {
     }
     dashes.instanceMatrix.needsUpdate = true
     dashes.frustumCulled = false
+    dashes.userData.noShadow = true
     return {
-      asphalt: ribbon({ width: 4.6, y: 0 }),
-      left: ribbon({ offset: -2.05, width: 0.1, y: 0.02 }),
-      right: ribbon({ offset: 2.05, width: 0.1, y: 0.02 }),
+      strips: [
+        [ribbon({ width: 5, y: 0.01 }), M.asphalt],
+        [ribbon({ offset: -4.4, width: 3.8, y: 0.09 }), M.pavement],
+        [ribbon({ offset: 4.4, width: 3.8, y: 0.09 }), M.pavement],
+        [ribbon({ offset: -2.56, width: 0.16, y: 0.11 }), kerb],
+        [ribbon({ offset: 2.56, width: 0.16, y: 0.11 }), kerb],
+      ],
       dashes,
       count,
     }
@@ -54,9 +59,9 @@ export default function Road() {
 
   return (
     <>
-      <mesh geometry={asphalt} material={M.asphalt} />
-      <mesh geometry={left} material={edgeMaterial} />
-      <mesh geometry={right} material={edgeMaterial} />
+      {strips.map(([geometry, material], i) => (
+        <mesh key={i} geometry={geometry} material={material} userData={{ receiveOnly: true }} />
+      ))}
       <primitive object={dashes} />
     </>
   )

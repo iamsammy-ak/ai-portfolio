@@ -27,7 +27,7 @@ export default function Rig() {
     live.time += step * live.motion
 
     // Ease the scooter toward where the scroll position says it should be.
-    const ease = live.motion ? 4.2 : 40
+    const ease = live.motion ? 3 : 40
     live.p += (live.target - live.p) * (1 - Math.exp(-ease * step))
     if (Math.abs(live.target - live.p) < 0.0004) live.p = live.target
 
@@ -38,22 +38,22 @@ export default function Rig() {
     const leaving = 1 - smooth(live.p) // 1 at the start line, 0 from the first stop on
     const arriving = smooth(live.p - (LAST - 1)) // 0 until the last stretch, 1 at the arch
 
-    const back = (8.2 + leaving * 2.2 + arriving * 1.8) * k
-    const side = 4.6 + leaving * 1.6 - arriving * 3.3
-    const height = (3.1 + leaving * 0.9 + arriving * 1.7) * k
-    const lookRight = 3.1 * (1 - leaving * 0.75) * (1 - arriving)
-    const lookAhead = 1.6 + leaving * 1.5 + arriving * 3.2
+    const back = (6.9 + leaving * 2.6 + arriving * 2.4) * k
+    const side = 3.7 + leaving * 1.9 - arriving * 2.6
+    const height = (2.45 + leaving * 0.75 + arriving * 1.9) * k
+    const lookRight = 3.3 * (1 - leaving * 0.75) * (1 - arriving)
+    const lookAhead = 2.4 + leaving * 1.5 + arriving * 2.6
 
     s.want.copy(f.pos).addScaledVector(f.tan, -back).addScaledVector(f.right, -side)
     s.want.y = height
     s.look.copy(f.pos).addScaledVector(f.right, lookRight).addScaledVector(f.tan, lookAhead)
-    s.look.y = 1.7 + arriving * 0.5
+    s.look.y = 1.9 + arriving * 0.4
 
     if (!s.started) {
       s.eye.copy(s.want)
       s.started = true
     }
-    s.eye.lerp(s.want, 1 - Math.exp(-(live.motion ? 5 : 40) * step))
+    s.eye.lerp(s.want, 1 - Math.exp(-(live.motion ? 3.4 : 40) * step))
     camera.position.copy(s.eye)
     camera.position.x += live.px * 0.35 * live.motion
     camera.position.y += -live.py * 0.2 * live.motion

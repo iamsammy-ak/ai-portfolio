@@ -418,7 +418,7 @@ function Stage() {
   )
 }
 
-/* ---- 10. How I'd coach: a workshop with a four-step plan on the board ---- */
+/* ---- 10. Approach: a workshop with a four-step plan on the board ---- */
 const STEPS = [1.6, 2.3, 3.0, 3.7]
 function Classroom() {
   const lm = useLandmark()

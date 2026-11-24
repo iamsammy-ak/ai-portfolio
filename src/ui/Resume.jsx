@@ -20,7 +20,7 @@ export default function Resume() {
         <header className="sheet-head">
           <h2 id="projects-title">Projects</h2>
           <p>
-            {count} public repositories, grouped by what they show. Every name links to the code.
+            {count} public repositories. Every name links to the code.
           </p>
         </header>
         {projectGroups.map((group) => (
@@ -47,7 +47,7 @@ export default function Resume() {
       <section id="hackathons" className="sheet" aria-labelledby="hackathons-title">
         <header className="sheet-head">
           <h2 id="hackathons-title">Hackathons</h2>
-          <p>Three AI builds under a clock, three podiums, all in 2026.</p>
+          <p>Three AI projects, three podiums, all in 2026.</p>
         </header>
         <ul className="rows">
           {hackathons.map((h) => (
@@ -68,7 +68,7 @@ export default function Resume() {
       <section id="experience" className="sheet" aria-labelledby="experience-title">
         <header className="sheet-head">
           <h2 id="experience-title">Experience</h2>
-          <p>Engineering, data and leading people.</p>
+          <p>Engineering, data and leadership.</p>
         </header>
         <ul className="rows">
           {experience.map((e) => (
@@ -87,7 +87,7 @@ export default function Resume() {
       <section id="toolkit" className="sheet" aria-labelledby="toolkit-title">
         <header className="sheet-head">
           <h2 id="toolkit-title">Toolkit</h2>
-          <p>What I work with, and what I can teach.</p>
+          <p>Tools and skills I work with.</p>
         </header>
         <div className="kit">
           {toolkit.map((set) => (
@@ -132,10 +132,9 @@ export default function Resume() {
       </section>
 
       <footer id="contact" className="contact">
-        <h2>Bring me in to coach your team.</h2>
+        <h2>Get in touch.</h2>
         <p>
-          I’m based in {person.location} and open to AI coaching and enablement roles, on site or remote. The fastest
-          way to reach me is email.
+          I am based in {person.location} and available on site or remotely. Email is the quickest way to reach me.
         </p>
         <p className="contact-links">
           <a className="button" href={`mailto:${person.email}`}>
@@ -152,7 +151,7 @@ export default function Resume() {
           </a>
         </p>
         <p className="colophon">
-          Designed and built with an AI coding agent, three.js and React Three Fiber. Every shape in the ride is drawn in
+          Built with three.js and React Three Fiber, with an AI coding agent. Every object in the scene is modelled in
           code.
         </p>
       </footer>

@@ -31,11 +31,13 @@ export const reducedMotion =
 
 /* Reactive state: only things the interface needs to re-render for. */
 export const useStore = create(() => ({
-  active: 0, // index of the stop nearest the middle of the screen
+  active: 0, // index of the stop nearest the scooter
+  shown: 0, // index of the stop whose text is on screen, or -1 between stops
   inRide: true, // false once the reader has scrolled past the ride
   tier: caps.tier, // 'high' | 'medium' | 'low'
   ready: false, // true once the first 3D frame is on screen
-  lost: false, // true if the graphics context was lost; the scene is then removed
+  lost: false, // true if the graphics context could not be kept; the scene is then removed
+  attempt: 0, // increases each time the scene is rebuilt after a lost context
 }))
 
 /* Per-frame values. The scene reads these inside its render loop, so
@@ -48,4 +50,16 @@ export const live = {
   px: 0, // pointer, -1..1
   py: 0,
   speed: 0, // scooter speed in metres per second
+}
+
+/* Some graphics drivers drop the WebGL context under load. Rebuild the scene
+   once at the lightest quality; if that fails too, keep the still backdrop. */
+export function reportContextLost() {
+  const { tier, attempt } = useStore.getState()
+  if (tier !== 'low' && attempt < 1) {
+    useStore.setState({ ready: false, tier: 'low' })
+    window.setTimeout(() => useStore.setState({ attempt: attempt + 1 }), 1500)
+  } else {
+    useStore.setState({ ready: false, lost: true })
+  }
 }

@@ -1,4 +1,4 @@
-import { destination, hero, person, stops } from '../content.js'
+import { destination, hero, person, route, stops } from '../content.js'
 import { useStore } from '../store.js'
 
 const isExternal = (href) => /^https?:/.test(href)
@@ -6,7 +6,7 @@ const isExternal = (href) => /^https?:/.test(href)
 function Links({ links }) {
   if (!links?.length) return null
   return (
-    <p className="panel-links">
+    <p className="card-links">
       {links.map((l) => (
         <a key={l.href} href={l.href} {...(isExternal(l.href) ? { target: '_blank', rel: 'noreferrer' } : {})}>
           {l.text}
@@ -16,33 +16,48 @@ function Links({ links }) {
   )
 }
 
-/* The scrolling text of the ride: one full-height section per stop. The 3D
-   scene sits behind these and follows whichever one is on screen. */
+/* The ride has two layers.
+
+   The track is a column of empty, screen-high sections. It only provides
+   scroll distance and link targets: scrolling moves the scooter, not the page.
+
+   The cards are fixed in place on top of the scene. Each one fades in when
+   the scooter reaches its stop and fades out when it leaves. */
 export default function Ride() {
-  const active = useStore((s) => s.active)
-  const cls = (i) => `stop ${active === i ? 'is-active' : ''}`
+  const shown = useStore((s) => s.shown)
+  const state = (i) => ({ className: `card ${shown === i ? 'is-shown' : ''}`, inert: shown !== i })
+  const lastIndex = stops.length + 1
 
   return (
     <>
-      <section id={hero.id} data-stop className={`${cls(0)} stop-hero`}>
-        <div className="panel panel-hero">
+      <div className="track" aria-hidden="true">
+        {route.map((stop) => (
+          <div key={stop.id} id={stop.id} data-stop className="track-stop" />
+        ))}
+      </div>
+
+      <div className="cards">
+        <section {...state(0)} className={`${state(0).className} card-title`}>
           <h1>{hero.title}</h1>
           <p className="lede">{hero.body}</p>
-          <p className="hero-actions">
+          <p className="actions">
             <a className="button" href={`#${stops[0].id}`}>
               {hero.cta}
             </a>
-            <span className="hint">{hero.hint}</span>
+            <a className="button button-quiet" href={person.links.cv} download>
+              Download CV
+            </a>
           </p>
-        </div>
-      </section>
+        </section>
 
-      {stops.map((stop, i) => (
-        <section key={stop.id} id={stop.id} data-stop className={cls(i + 1)} aria-labelledby={`${stop.id}-title`}>
-          <div className="panel">
+        {stops.map((stop, i) => (
+          <section key={stop.id} {...state(i + 1)} aria-labelledby={`${stop.id}-title`}>
+            <p className="card-count">
+              {String(i + 1).padStart(2, '0')} / {String(stops.length).padStart(2, '0')}
+            </p>
             <h2 id={`${stop.id}-title`}>{stop.title}</h2>
             <p className="where">{stop.where}</p>
-            {stop.body && <p>{stop.body}</p>}
+            {stop.body && <p className="card-body">{stop.body}</p>}
             {stop.steps && (
               <ol className="steps">
                 {stop.steps.map((step) => (
@@ -52,22 +67,22 @@ export default function Ride() {
                 ))}
               </ol>
             )}
-            <p className="coach">
-              <span>For your team</span>
-              {stop.coach}
-            </p>
+            {stop.note && (
+              <p className="note">
+                <span>{stop.noteLabel}</span>
+                {stop.note}
+              </p>
+            )}
             <Links links={stop.links} />
-          </div>
-        </section>
-      ))}
+          </section>
+        ))}
 
-      <section id={destination.id} data-stop className={`${cls(stops.length + 1)} stop-arrive`}>
-        <div className="panel panel-hero">
+        <section {...state(lastIndex)} className={`${state(lastIndex).className} card-title`}>
           <h2 className="arrive-title">{destination.title}</h2>
           <p className="lede">{destination.body}</p>
-          <p className="hero-actions">
+          <p className="actions">
             <a className="button" href={`mailto:${person.email}`}>
-              Email me
+              Email
             </a>
             <a className="button button-quiet" href={person.links.linkedin} target="_blank" rel="noreferrer">
               LinkedIn
@@ -76,8 +91,13 @@ export default function Ride() {
               Download CV
             </a>
           </p>
-        </div>
-      </section>
+        </section>
+      </div>
+
+      <p className={`cue ${shown === 0 ? 'is-shown' : ''}`} aria-hidden="true">
+        <span className="cue-mouse" />
+        Scroll
+      </p>
     </>
   )
 }

@@ -34,9 +34,11 @@ export function useScrollProgress(journeyRef) {
       live.target = p
 
       const active = Math.round(p)
+      // Text is on screen only while the scooter is at a stop, not on the road between two.
+      const shown = Math.abs(p - active) < 0.3 ? active : -1
       const inRide = journey.getBoundingClientRect().bottom > 0
       const state = useStore.getState()
-      if (state.active !== active || state.inRide !== inRide) useStore.setState({ active, inRide })
+      if (state.active !== active || state.inRide !== inRide || state.shown !== shown) useStore.setState({ active, inRide, shown })
     }
 
     const onScroll = () => {
@@ -51,7 +53,7 @@ export function useScrollProgress(journeyRef) {
     // A link to a specific stop (page.html#hackathons) opens on that stop.
     const linked = window.location.hash && document.getElementById(window.location.hash.slice(1))
     if (linked) {
-      linked.scrollIntoView({ behavior: 'instant', block: 'start' })
+      linked.scrollIntoView({ behavior: 'instant' })
       update()
     }
     // Start exactly where the page is, so a reload mid-page does not replay the whole road.

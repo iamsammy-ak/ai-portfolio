@@ -1,28 +1,28 @@
-# Abhishek Kumar: AI coach portfolio
+# Abhishek Kumar: portfolio
 
-**Live site: https://iamsammy-ak.github.io/ai-coach-portfolio/**
+**Live site: https://iamsammy-ak.github.io/ai-portfolio/**
 
-A portfolio you ride through. Scroll, and a scooter travels a dusk road past
-twelve stops. Each stop is one piece of evidence for a single claim: I learned AI
-by shipping it, and I can coach a team to do the same.
+A portfolio you ride through. Scrolling moves a scooter along a street at golden
+hour, past twelve stops. The page itself does not scroll during the ride: the
+world moves, and a card of text fades in when the scooter reaches each stop.
 
-Below the ride is the plain version of the same story: every public project,
-hackathons, experience and toolkit.
+Below the ride is a plain résumé section: every public project, hackathons,
+experience and toolkit.
 
 ## The stops
 
-| Stop | What it shows |
+| Stop | What it covers |
 | --- | --- |
-| Engineer first | Computer engineering and data analysis, including client training |
-| Three years of building with AI | Daily work with assistants, agents, local and hosted models |
-| Fast under pressure | Three hackathon podiums in 2026 |
-| AI under the hood | Eleven open-source systems that make up an agent stack |
-| Safe to use at work | Privacy, verification and a human in the loop |
-| A use case for every department | Ten working assistants for business teams |
-| Where your people already work | Microsoft 365 Copilot, Copilot Studio, Power Platform |
-| Products people use | Apps built for real users |
-| Leading people | Running a 1,000+ member student association |
-| How I'd coach your team | The four-step method I would bring |
+| Engineering and data | Computer engineering and data analysis |
+| Three years of building with AI | Everyday work with assistants, agents, local and hosted models |
+| Three podiums in 2026 | Hackathon results |
+| How AI systems work | Eleven open-source systems that make up an agent stack |
+| Responsible use | Privacy, verification and human oversight |
+| AI across business functions | Ten working assistants |
+| The Microsoft stack | Microsoft 365 Copilot, Copilot Studio, Power Platform |
+| Products in use | Apps built for everyday users |
+| Leading people | Running a student association of more than 1,000 members |
+| How I work | The four steps applied on every project |
 
 ## Change the content
 
@@ -44,12 +44,13 @@ Pushing to `main` rebuilds and publishes the site through the workflow in
 ## How it is built
 
 - **Vite and React** for the page.
-- **three.js through React Three Fiber** for the scene. Every shape in it, from the
-  scooter to the landmarks, is drawn in code from boxes, cylinders and cones.
-  There are no 3D model files and no image textures.
+- **three.js through React Three Fiber** for the scene. Everything in it is
+  modelled in code: the scooter and rider, the city blocks, the landmarks and
+  the sky. There are no 3D model files and no image textures.
+- **Real-time shadows** from a low sun, a procedural sunset sky with clouds,
+  and bloom, vignette and filmic tone mapping as post-processing.
 - **A small state store (zustand)** connects the scroll position to the scene
   without re-rendering the page on every frame.
-- **Post-processing** adds bloom and a vignette on capable machines.
 
 | Where | What |
 | --- | --- |
@@ -57,21 +58,18 @@ Pushing to `main` rebuilds and publishes the site through the workflow in
 | `src/scene/layout.js` | The shape of the road |
 | `src/scene/Scooter.jsx` | The scooter and rider |
 | `src/scene/Landmarks.jsx` | One landmark per stop |
-| `src/scene/World.jsx` | Sky, mountains, trees, lights |
+| `src/scene/World.jsx` | Sky, sun, city blocks, street lamps, trees |
 | `src/scene/Rig.jsx` | The camera, and the frame-rate monitor |
-| `src/ui/` | Header, route map, stop text, résumé section |
+| `src/ui/` | Header, route map, cards, résumé section |
 
 ## Built to open everywhere
 
-The text is ordinary HTML and is readable before the 3D scene has loaded. The
-scene is a separate download that fades in behind it, so nothing waits on a
-loading screen.
-
 - Quality is chosen per device with no network request, and steps down on its
   own if the frame rate drops.
-- If WebGL is missing, or the graphics driver drops the context, the page falls
-  back to a still backdrop and keeps working.
-- Reduced-motion settings are respected, and every stop can be reached by
-  keyboard through the route map.
+- Some graphics drivers drop the WebGL context under load. If that happens the
+  scene is rebuilt once at the lightest quality, and if it happens again the
+  page falls back to a still backdrop and keeps working.
+- The intro screen never blocks for more than a few seconds.
+- Reduced-motion settings are respected.
 - Add `?plain` to the address to turn the scene off, or `?quality=low`,
   `?quality=medium` or `?quality=high` to choose a quality level by hand.
