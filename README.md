@@ -10,6 +10,8 @@ The original loading screen, start interaction, 3D journey, typography, navigati
 
 `predev` and `prebuild` create the local world from the checked-in snapshot. Tests serve the production build under `/ai-portfolio/`.
 
+Each adapted world is published under a content-versioned directory. `src/world-path.json` is generated before Vite builds, so browsers cannot mix cached runtime files from different deployments. The loader counts actual resources and reports engine-download failures with a retry action.
+
 ## Edit
 
 - `scripts/prepare-world.mjs`: original loader, personal biography, skills, contact and gallery adaptation.

@@ -1,12 +1,23 @@
-import { cp, mkdir, readFile, writeFile, readdir } from 'node:fs/promises'
+import { cp, mkdir, readFile, writeFile, readdir, rm } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { featuredProjects } from '../src/profile.js'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const source = path.join(root, 'reference-assets/sebastien-lempens')
-const output = path.join(root, 'public/world')
+// Give every adapted runtime a new URL, including its imported modules and CSS.
+// Fixed upstream filenames otherwise let a browser combine two deployments.
+const fingerprint = createHash('sha256')
+for (const file of ['scripts/prepare-world.mjs', 'src/profile.js', 'src/world/bridge.js', 'src/world/bootstrap.js', 'src/world/world.css']) fingerprint.update(await readFile(path.join(root, file)))
+const revision = fingerprint.digest('hex').slice(0, 12)
+const generatedRoot = path.resolve(root, 'public/world')
+if (path.relative(root, generatedRoot).replaceAll('\\', '/') !== 'public/world') throw new Error('Unsafe generated directory')
+await rm(generatedRoot, { recursive: true, force: true })
+const output = path.join(generatedRoot, revision)
+await writeFile(path.join(root, 'src/world-path.json'), JSON.stringify(`world/${revision}/index.html`))
 await mkdir(output, { recursive: true })
+await writeFile(path.join(generatedRoot, 'index.html'), `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=${revision}/index.html"><title>Abhishek Kumar portfolio</title></head><body><a href="${revision}/index.html">Open the portfolio</a></body></html>`)
 for (const folder of ['assets', 'gltf', 'texture', 'hdri', 'sounds', 'fonts', 'image', 'vendors', '_external']) {
   await cp(path.join(source, folder), path.join(output, folder), { recursive: true })
 }
@@ -31,6 +42,10 @@ await patch('Scene-CdCGEhkU.js', [
   ['transition:"onExit",isSoundsMuted:!1', 'transition:"onExit",isSoundsMuted:!0'],
   ['a.playAll(),document.querySelector(".cursor-scroll")', 'document.querySelector(".cursor-scroll")'],
   ['else a.completion=a.completion,e=0', 'else he.setState({scroll:a.completion}),e=0'],
+  ['const o=n/45;o<=1&&I.setState({scene_load_progress:o})', 'const o=Math.min(.99,n/Math.max(r,1));I.setState({scene_load_progress:Math.max(I.getState().scene_load_progress||0,o)});window.akLoadingProgress?.(n,r)'],
+  ['g.innerText=B', 'g.innerText=String(Math.max(parseInt(g.innerText)||0,T)).padStart(3,"0")'],
+  ['I.setState({scene_loaded:!0})', 'I.setState({scene_loaded:!0,scene_load_progress:1});window.akLoadingProgress?.(1,1)'],
+  ['function p(){console.log("%c Scene Loaded"', 'let startBound=false;setTimeout(p,2400);function p(){if(startBound)return;startBound=true;console.log("%c Scene Loaded"'],
 ])
 await patch('Skills-DFKl31g5.js', [
   ['html:"Project Management"', 'html:"Project Management"'], ['html:"Web Design"', 'html:"Python & SQL"'],
@@ -99,9 +114,9 @@ await writeFile(path.join(output, 'index.html'), `<!doctype html>
 <title>Abhishek Kumar — interactive world</title><link rel="stylesheet" href="assets/index-CaPdr700.css">
 <style>${loadingStyle}</style><link rel="stylesheet" href="world.css"></head><body>
 <div id="preloader" class="preloader--france" data-progress="0"><div class="motorbike active"><img src="image/motorbike.png" width="312" height="260" alt="" /><code>000</code></div><div class="city"></div><div class="preloader-enter"><a class="button-start" href="javascript:void(0)"> start </a><p>For the best experience</p><p>Turn your sound on / Switch to desktop</p></div></div>
-<div id="awards"></div><div id="root"></div>
-<script src="vendors/momentum.min.js"></script><script type="module" src="bridge.js"></script></body></html>`)
-for (const file of ['bridge.js', 'world.css']) await cp(path.join(root, 'src/world', file), path.join(output, file))
+<div class="load-status" role="status">Loading the 3D engine…</div><div id="awards"></div><div id="root"></div>
+<script src="vendors/momentum.min.js"></script><script type="module" src="bootstrap.js"></script></body></html>`)
+for (const file of ['bridge.js', 'bootstrap.js', 'world.css']) await cp(path.join(root, 'src/world', file), path.join(output, file))
 // CSS font and image URLs need the same subdirectory fix.
 const cssPath = path.join(output, 'assets/index-CaPdr700.css')
 let css = await readFile(cssPath, 'utf8')
@@ -111,6 +126,6 @@ for (const name of await readdir(path.join(output, 'assets'))) {
   if (!name.endsWith('.js')) continue
   const file = path.join(output, 'assets', name)
   const code = await readFile(file, 'utf8')
-  await writeFile(file, code.replace(/(["'`])\/(sounds|hdri|texture|image|fonts)\//g, '$1$2/'))
+  await writeFile(file, code.replace(/(["'`])\/(sounds|hdri|texture|image|fonts)\//g, '$1$2/').replaceAll('../Abhishek_Kumar_CV.pdf', '../../Abhishek_Kumar_CV.pdf'))
 }
 console.log('Prepared the original world with local assets and the portfolio bridge.')

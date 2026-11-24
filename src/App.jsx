@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { person } from './content.js'
+import worldPath from './world-path.json'
 
 export default function App() {
   const frame = useRef(null)
@@ -16,7 +17,7 @@ export default function App() {
     return () => { clearTimeout(timeout); window.removeEventListener('message', receive) }
   }, [version])
   return <main className="portfolio">
-    <iframe key={version} ref={frame} className="world" src={`${import.meta.env.BASE_URL}world/index.html`} title="Abhishek Kumar interactive portfolio" allow="autoplay" onLoad={() => frame.current?.contentWindow?.postMessage({ source: 'ak-portfolio', type: 'ping' }, location.origin)} />
+    <iframe key={version} ref={frame} className="world" src={`${import.meta.env.BASE_URL}${worldPath}${version ? `?retry=${version}` : ''}`} title="Abhishek Kumar interactive portfolio" allow="autoplay" onLoad={() => frame.current?.contentWindow?.postMessage({ source: 'ak-portfolio', type: 'ping' }, location.origin)} />
     {failed && <aside className="load-error" role="alert"><p>The world could not load.</p><a href={person.links.cv} download>Download CV</a><a href={person.links.github}>GitHub projects</a><button onClick={() => { setFailed(false); setVersion(value => value + 1) }}>Try again</button></aside>}
   </main>
 }
