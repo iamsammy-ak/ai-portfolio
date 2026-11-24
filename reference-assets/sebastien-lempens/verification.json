@@ -1,0 +1,21 @@
+{
+  "downloaded_files": 125,
+  "bytes": 18203111,
+  "sha256_and_size_checks": "passed for every manifest entry",
+  "format_checks": "GLB, PNG, WebP, JPEG, WOFF2 and WASM signatures/container checks passed",
+  "counts_by_extension": {
+    ".html": 1,
+    ".glb": 4,
+    ".png": 43,
+    ".mp3": 7,
+    ".m4a": 1,
+    ".jpg": 2,
+    ".js": 39,
+    ".wasm": 1,
+    ".css": 1,
+    ".ico": 1,
+    ".woff2": 3,
+    ".webp": 22
+  },
+  "limitations": "No visual rendering, browser integration, full model decoding, or audio playback test performed. Google Fonts external stylesheet/font not included."
+}

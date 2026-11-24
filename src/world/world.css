@@ -1,0 +1,8 @@
+/* Content is supplied by the accessible parent app; the embedded document supplies the original scene. */
+html, body { margin: 0; overflow: hidden; width: 100%; height: 100%; }
+#preloader { opacity: 0; pointer-events: none !important; }
+#awards, .__html, .ui-nav, .main-title, .cursor-scroll, .joystick,
+.popup, .portfolio-item, .credits, .fr-text { visibility: hidden !important; pointer-events: none !important; }
+.skills-HUD { visibility: visible !important; pointer-events: none !important; }
+.skills-HUD h3 { font-family: sans-serif; }
+canvas { outline: none; }

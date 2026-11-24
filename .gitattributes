@@ -1,0 +1,2 @@
+# Preserve the downloaded asset snapshot byte-for-byte, including embedded shaders.
+reference-assets/** -text -diff

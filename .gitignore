@@ -8,3 +8,9 @@ dist
 .claude
 # The published copy of the CV lives in public/
 /Abhishek_Kumar_CV.pdf
+
+# Rebuilt from the checked-in asset snapshot
+/public/world/
+/test-results/
+/playwright-report/
+/artifacts/

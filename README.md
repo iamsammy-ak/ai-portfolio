@@ -1,80 +1,47 @@
-# Abhishek Kumar: portfolio
+# Abhishek Kumar ? AI coach portfolio
 
-**Live site: https://iamsammy-ak.github.io/ai-portfolio/**
+Live: https://iamsammy-ak.github.io/ai-portfolio/
 
-A portfolio you travel through. It opens on a counter and a Start button, then a
-held shot of a parked scooter at golden hour. Scrolling lifts the camera into a
-first-person glide down the street, past twelve stops. The page itself does not
-scroll during the ride: the world moves, each stop's name hangs over the road as
-you approach, and a card of text fades in when you arrive. Ambient sound is
-generated in the browser and can be switched off in the header.
+An interactive journey through France, Luxembourg and Belgium, paired with a complete readable profile for hiring teams. The portfolio connects AI engineering projects to coaching, responsible adoption and measurable efficiency.
 
-Below the ride is a plain résumé section: every public project, hackathons,
-experience and toolkit.
+## Run
 
-## The stops
-
-| Stop | What it covers |
-| --- | --- |
-| Engineering and data | Computer engineering and data analysis |
-| Three years of building with AI | Everyday work with assistants, agents, local and hosted models |
-| Three podiums in 2026 | Hackathon results |
-| How AI systems work | Eleven open-source systems that make up an agent stack |
-| Responsible use | Privacy, verification and human oversight |
-| AI across business functions | Ten working assistants |
-| The Microsoft stack | Microsoft 365 Copilot, Copilot Studio, Power Platform |
-| Products in use | Apps built for everyday users |
-| Leading people | Running a student association of more than 1,000 members |
-| How I work | The four steps applied on every project |
-
-## Change the content
-
-All of the words, links and projects are in one file: [`src/content.js`](src/content.js).
-Edit it and the ride, the route map and the résumé section all update. To replace
-the CV, overwrite `public/Abhishek_Kumar_CV.pdf`.
-
-## Run it locally
-
-```bash
-npm install
-npm run dev      # development server
-npm run build    # production build into dist/
+```sh
+npm ci
+npm run dev
+npm run build
+npm test
 ```
 
-Pushing to `main` rebuilds and publishes the site through the workflow in
-`.github/workflows/deploy.yml`.
+The build prepares a local copy of the original 3D world before Vite compiles the profile. No external assets or analytics are needed at runtime. Tests use installed Chrome and serve the production build under `/ai-portfolio/` to catch GitHub Pages path errors. Build before running tests.
 
-## How it is built
+## Edit
 
-- **Vite and React** for the page.
-- **three.js through React Three Fiber** for the scene. Everything in it is
-  modelled in code: the scooter and rider, the city blocks, the landmarks and
-  the sky. There are no 3D model files and no image textures.
-- **Real-time shadows** from a low sun, a procedural sunset sky with clouds,
-  and bloom, vignette and filmic tone mapping as post-processing.
-- **A small state store (zustand)** connects the scroll position to the scene
-  without re-rendering the page on every frame.
+- `src/content.js`: personal details, experience, education, hackathons and toolkit.
+- `src/profile.js`: journey chapters and featured GitHub case studies.
+- `src/github-projects.json`: public, non-fork repository snapshot verified on 24 November 2026.
+- `src/ui/Overview.jsx`: readable profile, search/filter directory and illustrative efficiency calculator.
+- `src/world/bridge.js`: same-origin integration with the original scene, travel controls and optional audio.
+- `scripts/prepare-world.mjs`: checked patches, personalized 3D gallery artwork and local asset paths.
+- `reference-assets/sebastien-lempens/`: original captured scene files and provenance; preserved as build inputs.
+- `public/Abhishek_Kumar_CV.pdf`: downloadable CV.
 
-| Where | What |
-| --- | --- |
-| `src/content.js` | Every word on the site |
-| `src/scene/layout.js` | The shape of the road |
-| `src/scene/Scooter.jsx` | The scooter and rider |
-| `src/scene/Landmarks.jsx` | One landmark per stop |
-| `src/scene/World.jsx` | Sky, sun, city blocks, street lamps, trees |
-| `src/scene/Rig.jsx` | The camera, and the frame-rate monitor |
-| `src/scene/Titles.jsx` | Stop names hanging over the street |
-| `src/audio.js` | Generated ambient sound |
-| `src/ui/` | Header, route map, cards, résumé section |
+`public/world/` and `dist/` are generated and ignored. The source snapshot is committed so builds are reproducible without downloading the original website again.
 
-## Built to open everywhere
+## Reading and accessibility
 
-- Quality is chosen per device with no network request, and steps down on its
-  own if the frame rate drops.
-- Some graphics drivers drop the WebGL context under load. If that happens the
-  scene is rebuilt once at the lightest quality, and if it happens again the
-  page falls back to a still backdrop and keeps working.
-- The intro screen never blocks for more than a few seconds.
-- Reduced-motion settings are respected.
-- Add `?plain` to the address to turn the scene off, or `?quality=low`,
-  `?quality=medium` or `?quality=high` to choose a quality level by hand.
+Use `?plain` or a section link such as `#projects` to open the readable profile directly. Reduced-motion preferences default to the readable profile. The 3D experience supports wheel, touch, keyboard arrows, travel buttons and chapter navigation. Sound starts muted. A loading or graphics failure leaves the readable profile accessible. The profile can be printed from its contact section.
+
+## Evidence
+
+Professional history is retained from the existing portfolio. GitHub project descriptions and featured benchmark documentation were checked against public repositories. The RAG figure is from 69 synthetic test questions with offline generation. Gateway cost savings use synthetic traffic and illustrative pricing; quality tradeoffs are shown alongside the result. Calculator outputs are explicitly illustrative, not claimed client outcomes.
+
+## World attribution
+
+Original 3D world, art and scene implementation: S?bastien Lempens, https://sebastien-lempens.com/.
+
+The owner authorized this adaptation in the working session. That authorization is not a new blanket license for third-party assets. The original asset licensing status and sources are recorded in the snapshot README. The deployed application removes the original analytics and award claims and uses Abhishek?s project information. Original asset provenance is preserved, and visible credits are included in the profile footer.
+
+## Deployment
+
+Pushing `main` runs `.github/workflows/deploy.yml` and publishes `dist/` to GitHub Pages. All runtime asset paths support the `/ai-portfolio/` subdirectory.
