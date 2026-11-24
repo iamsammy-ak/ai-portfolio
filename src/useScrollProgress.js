@@ -36,7 +36,8 @@ export function useScrollProgress(journeyRef) {
       const active = Math.round(p)
       // Text is on screen only while the scooter is at a stop, not on the road between two.
       const shown = Math.abs(p - active) < 0.3 ? active : -1
-      const inRide = journey.getBoundingClientRect().bottom > 0
+      // The ride counts as over once the section below covers most of the screen.
+      const inRide = journey.getBoundingClientRect().bottom > window.innerHeight * 0.35
       const state = useStore.getState()
       if (state.active !== active || state.inRide !== inRide || state.shown !== shown) useStore.setState({ active, inRide, shown })
     }
