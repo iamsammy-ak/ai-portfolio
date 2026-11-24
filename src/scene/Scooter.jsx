@@ -61,7 +61,9 @@ export default function Scooter() {
 
   useFrame((_, dt) => {
     const s = state.current
-    const f = frameAt(live.p, s.frame)
+    // The scooter is parked at the start line: it is the subject of the opening
+    // shot, and the camera leaves it behind when the glide begins.
+    const f = frameAt(0, s.frame)
     const heading = Math.atan2(f.tan.x, f.tan.z)
     root.current.position.copy(f.pos)
     root.current.rotation.y = heading

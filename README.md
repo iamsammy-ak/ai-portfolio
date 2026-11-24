@@ -2,9 +2,12 @@
 
 **Live site: https://iamsammy-ak.github.io/ai-portfolio/**
 
-A portfolio you ride through. Scrolling moves a scooter along a street at golden
-hour, past twelve stops. The page itself does not scroll during the ride: the
-world moves, and a card of text fades in when the scooter reaches each stop.
+A portfolio you travel through. It opens on a counter and a Start button, then a
+held shot of a parked scooter at golden hour. Scrolling lifts the camera into a
+first-person glide down the street, past twelve stops. The page itself does not
+scroll during the ride: the world moves, each stop's name hangs over the road as
+you approach, and a card of text fades in when you arrive. Ambient sound is
+generated in the browser and can be switched off in the header.
 
 Below the ride is a plain résumé section: every public project, hackathons,
 experience and toolkit.
@@ -60,6 +63,8 @@ Pushing to `main` rebuilds and publishes the site through the workflow in
 | `src/scene/Landmarks.jsx` | One landmark per stop |
 | `src/scene/World.jsx` | Sky, sun, city blocks, street lamps, trees |
 | `src/scene/Rig.jsx` | The camera, and the frame-rate monitor |
+| `src/scene/Titles.jsx` | Stop names hanging over the street |
+| `src/audio.js` | Generated ambient sound |
 | `src/ui/` | Header, route map, cards, résumé section |
 
 ## Built to open everywhere

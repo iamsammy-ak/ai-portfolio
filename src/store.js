@@ -38,6 +38,8 @@ export const useStore = create(() => ({
   ready: false, // true once the first 3D frame is on screen
   lost: false, // true if the graphics context could not be kept; the scene is then removed
   attempt: 0, // increases each time the scene is rebuilt after a lost context
+  entered: false, // true once the visitor has pressed Start on the opening screen
+  muted: false, // sound toggle in the header
 }))
 
 /* Per-frame values. The scene reads these inside its render loop, so

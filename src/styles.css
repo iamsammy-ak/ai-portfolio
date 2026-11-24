@@ -207,6 +207,7 @@ main {
   place-content: center;
   justify-items: center;
   gap: 0.5rem;
+  text-align: center;
   background: var(--ink);
   transition:
     opacity 900ms ease 200ms,
@@ -227,6 +228,16 @@ main {
 .intro-role {
   color: var(--mist);
 }
+.intro-count {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 100;
+  font-weight: 700;
+  font-size: clamp(5rem, 17vw, 13rem);
+  line-height: 0.9;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(241, 238, 255, 0.1);
+}
 .intro-bar {
   position: relative;
   width: min(15rem, 60vw);
@@ -241,14 +252,83 @@ main {
   inset: 0;
   background: var(--saffron);
   transform-origin: left;
-  animation: intro-load 5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  transform: scaleX(var(--load, 0));
+  transition: transform 120ms linear;
 }
-@keyframes intro-load {
+.intro-start {
+  margin-top: 1.6rem;
+  padding: 0.8rem 2.6rem;
+  border: 1.5px solid var(--saffron);
+  border-radius: 0.65rem;
+  background: var(--saffron);
+  color: var(--ink);
+  font: 600 1.05rem var(--text);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(0.6rem);
+  transition:
+    opacity 400ms ease,
+    transform 400ms ease,
+    background-color 150ms ease;
+}
+.intro-start.is-ready {
+  opacity: 1;
+  transform: none;
+}
+.intro-start.is-ready:hover {
+  background: #ffc552;
+}
+.intro-hint {
+  font-size: 0.88rem;
+  color: var(--mist);
+  opacity: 0;
+  transition: opacity 400ms ease 150ms;
+}
+.intro-hint.is-ready {
+  opacity: 1;
+}
+
+/* Sound toggle in the header */
+.sound {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.sound-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 0.9rem;
+}
+.sound-bars i {
+  width: 2px;
+  height: 100%;
+  background: currentColor;
+  transform-origin: bottom;
+  animation: sound-bar 900ms ease-in-out infinite alternate;
+}
+.sound-bars i:nth-child(2) {
+  animation-delay: -300ms;
+}
+.sound-bars i:nth-child(3) {
+  animation-delay: -600ms;
+}
+.sound.is-muted .sound-bars i {
+  animation: none;
+  transform: scaleY(0.25);
+}
+@keyframes sound-bar {
   from {
-    transform: scaleX(0);
+    transform: scaleY(0.3);
   }
   to {
-    transform: scaleX(0.94);
+    transform: scaleY(1);
   }
 }
 
@@ -830,6 +910,10 @@ h1,
   }
   .top-links a:not(.top-cta) {
     display: none;
+  }
+  .sound {
+    font-size: 0;
+    gap: 0;
   }
   .group,
   .rows li {

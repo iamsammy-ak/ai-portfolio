@@ -1,8 +1,15 @@
 import { person } from '../content.js'
 import { useStore } from '../store.js'
+import { setMuted } from '../audio.js'
 
 export default function Header() {
   const inRide = useStore((s) => s.inRide)
+  const muted = useStore((s) => s.muted)
+  const toggleSound = () => {
+    const next = !muted
+    useStore.setState({ muted: next })
+    setMuted(next)
+  }
   return (
     <header className={`top ${inRide ? '' : 'on-paper'}`}>
       <a className="top-name" href="#start">
@@ -15,6 +22,14 @@ export default function Header() {
         <a href={person.links.cv} download>
           CV
         </a>
+        <button type="button" className={`sound ${muted ? 'is-muted' : ''}`} onClick={toggleSound} aria-pressed={!muted}>
+          <span className="sound-bars" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+          {muted ? 'Sound off' : 'Sound on'}
+        </button>
         <a className="top-cta" href="#contact">
           Contact
         </a>

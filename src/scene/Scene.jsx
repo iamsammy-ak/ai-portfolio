@@ -7,6 +7,7 @@ import World from './World.jsx'
 import Road from './Road.jsx'
 import Scooter from './Scooter.jsx'
 import Landmarks from './Landmarks.jsx'
+import Titles from './Titles.jsx'
 import Rig, { Monitor } from './Rig.jsx'
 import { reportContextLost, useStore } from '../store.js'
 
@@ -45,6 +46,7 @@ export default function Scene() {
         <Road />
         <Scooter />
         <Landmarks />
+        <Titles />
         <Rig />
         <Monitor />
         {tier === 'high' && (
