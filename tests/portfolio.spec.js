@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { readFile } from 'node:fs/promises'
 
 test('original loader and world use personal CV and GitHub content', async ({ page, request }) => {
   const errors = [], failures = []
@@ -15,6 +16,11 @@ test('original loader and world use personal CV and GitHub content', async ({ pa
   await page.waitForTimeout(3500)
   await page.screenshot({ path: 'artifacts/original-home.png' })
   const frame = page.frames().find(f => f.url().includes('/world/'))
+  // Contact and preloader portraits are separate assets from the animated model.
+  for (const name of ['motorbike.png', 'thumbnail-contact.png', 'thumbnail-x.png', 'thumbnail-credit.png']) {
+    const response = await request.get(new URL(`image/${name}`, frame.url()).href)
+    expect((await response.body()).equals(await readFile(`custom-assets/avatar/image/${name}`))).toBe(true)
+  }
   const avatar = await frame.evaluate(async () => {
     const state = (await import('./assets/index-DjXkBzPf.js')).aM.getState()
     const hair = state.mesh_sebastien.getObjectByName('Abhishek_Hair')

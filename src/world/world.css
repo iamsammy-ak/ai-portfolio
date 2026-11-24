@@ -4,6 +4,8 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden}
 #awards{display:none!important}
 .ui-nav li:focus-visible,a:focus-visible,.contactButton:focus-visible{outline:2px solid white;outline-offset:6px}
 .fr-text-content a{color:inherit;text-decoration:underline}
+/* The personalized scooter render already includes both wheels. */
+#preloader>div.motorbike::before,#preloader>div.motorbike::after{display:none}
 canvas{outline:none}
 .load-status{position:fixed;top:calc(50% + 200px);left:20px;right:20px;text-align:center;font:14px/1.5 sans-serif;color:#655b66;z-index:100;pointer-events:none}
 #preloader.end~.load-status,.html--loaded .load-status{display:none}

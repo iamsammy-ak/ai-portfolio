@@ -7,11 +7,13 @@ import { featuredProjects } from '../src/profile.js'
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const source = path.join(root, 'reference-assets/sebastien-lempens')
 const avatar = path.join(root, 'custom-assets/avatar/model.glb')
+const avatarImages = ['motorbike.png', 'thumbnail-contact.png', 'thumbnail-x.png', 'thumbnail-credit.png']
 // Give every adapted runtime a new URL, including its imported modules and CSS.
 // Fixed upstream filenames otherwise let a browser combine two deployments.
 const fingerprint = createHash('sha256')
 for (const file of ['scripts/prepare-world.mjs', 'src/profile.js', 'src/world/bridge.js', 'src/world/bootstrap.js', 'src/world/world.css']) fingerprint.update(await readFile(path.join(root, file)))
 fingerprint.update(await readFile(avatar))
+for (const name of avatarImages) fingerprint.update(await readFile(path.join(root, 'custom-assets/avatar/image', name)))
 const revision = fingerprint.digest('hex').slice(0, 12)
 const generatedRoot = path.resolve(root, 'public/world')
 if (path.relative(root, generatedRoot).replaceAll('\\', '/') !== 'public/world') throw new Error('Unsafe generated directory')
@@ -26,6 +28,7 @@ for (const folder of ['assets', 'gltf', 'texture', 'hdri', 'sounds', 'fonts', 'i
 // The approved avatar keeps the original scene nodes, skeletons and animation clips.
 // Override only the generated bundle so the captured source remains reproducible.
 await cp(avatar, path.join(output, 'gltf/model.glb'))
+for (const name of avatarImages) await cp(path.join(root, 'custom-assets/avatar/image', name), path.join(output, 'image', name))
 
 // Keep the captured scene intact. Apply small, checked integration patches to the generated copy.
 async function patch(name, replacements) {
@@ -118,7 +121,7 @@ await writeFile(path.join(output, 'index.html'), `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Abhishek Kumar — interactive world</title><link rel="stylesheet" href="assets/index-CaPdr700.css">
 <style>${loadingStyle}</style><link rel="stylesheet" href="world.css"></head><body>
-<div id="preloader" class="preloader--france" data-progress="0"><div class="motorbike active"><img src="image/motorbike.png" width="312" height="260" alt="" /><code>000</code></div><div class="city"></div><div class="preloader-enter"><a class="button-start" href="javascript:void(0)"> start </a><p>For the best experience</p><p>Turn your sound on / Switch to desktop</p></div></div>
+<div id="preloader" class="preloader--france" data-progress="0"><div class="motorbike active"><img src="image/motorbike.png" width="312" height="260" alt="Abhishek riding a scooter" /><code>000</code></div><div class="city"></div><div class="preloader-enter"><a class="button-start" href="javascript:void(0)"> start </a><p>For the best experience</p><p>Turn your sound on / Switch to desktop</p></div></div>
 <div class="load-status" role="status">Loading the 3D engine…</div><div id="awards"></div><div id="root"></div>
 <script src="vendors/momentum.min.js"></script><script type="module" src="bootstrap.js"></script></body></html>`)
 for (const file of ['bridge.js', 'bootstrap.js', 'world.css']) await cp(path.join(root, 'src/world', file), path.join(output, file))
