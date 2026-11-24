@@ -1,0 +1,730 @@
+/* ------------------------------------------------------------------
+   Tokens: a dusk ride. Indigo night, lavender paper, one warm light.
+   ------------------------------------------------------------------ */
+:root {
+  --ink: #17133a;
+  --ink-deep: #110d31;
+  --violet: #4a3db8;
+  --periwinkle: #8e8bff;
+  --mist: #c3bfff;
+  --paper: #f1eeff;
+  --saffron: #ffb627;
+  --rose: #ff5d8f;
+
+  --display: 'Bricolage Grotesque Variable', 'Arial Narrow', sans-serif;
+  --text: 'IBM Plex Sans', system-ui, sans-serif;
+
+  --gutter: clamp(1.25rem, 4.2vw, 4rem);
+  --focus: var(--saffron);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 0;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--text);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--paper);
+  background: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+ol {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 50;
+  padding: 0.6rem 0.9rem;
+  background: var(--saffron);
+  color: var(--ink);
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transform: translateY(-200%);
+}
+.skip:focus {
+  transform: none;
+}
+
+/* ------------------------------------------------------------------
+   The layers behind the text
+   ------------------------------------------------------------------ */
+
+/* Shown until the 3D scene is ready, and for good if WebGL is unavailable. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(120% 60% at 70% 100%, rgba(192, 96, 156, 0.4), transparent 60%),
+    linear-gradient(180deg, var(--ink-deep) 0%, #2a2270 62%, #6a4ba6 100%);
+}
+
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+.stage.is-ready {
+  opacity: 1;
+}
+.stage canvas {
+  display: block;
+}
+
+/* Darkens the side the words sit on, so they stay readable over the scene. */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(17, 13, 49, 0.9) 0%, rgba(17, 13, 49, 0.62) 26%, rgba(17, 13, 49, 0) 54%),
+    linear-gradient(0deg, rgba(17, 13, 49, 0.55) 0%, rgba(17, 13, 49, 0) 30%);
+}
+
+main {
+  position: relative;
+  z-index: 3;
+}
+
+/* ------------------------------------------------------------------
+   Header
+   ------------------------------------------------------------------ */
+.top {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem var(--gutter);
+  transition:
+    background-color 250ms ease,
+    color 250ms ease;
+}
+
+.top-name {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 88;
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1.1;
+  text-decoration: none;
+}
+.top-name span {
+  display: block;
+  margin-top: 0.15rem;
+  font-family: var(--text);
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--mist);
+}
+
+.top-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.9rem, 2vw, 1.75rem);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.top-links a {
+  text-decoration: none;
+}
+.top-links a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+.top-cta {
+  padding: 0.45rem 0.95rem;
+  border: 1.5px solid var(--saffron);
+  border-radius: 0.55rem;
+}
+
+.top.on-paper {
+  --focus: var(--violet);
+  color: var(--ink);
+  background: rgba(241, 238, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(23, 19, 58, 0.12);
+}
+.top.on-paper .top-name span {
+  color: var(--violet);
+}
+.top.on-paper .top-cta {
+  border-color: var(--ink);
+}
+
+/* ------------------------------------------------------------------
+   The ride: one screen-high section per stop
+   ------------------------------------------------------------------ */
+.stop {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  padding: 6.5rem var(--gutter) 9vh;
+}
+
+/* Only the stop you are at shows its words; the rest fade out so the road stays clear. */
+.panel {
+  max-width: 31rem;
+  opacity: 0;
+  transition: opacity 350ms ease;
+}
+.stop.is-active .panel {
+  opacity: 1;
+}
+.panel-hero {
+  max-width: 46rem;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 84;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+h1,
+.arrive-title {
+  font-size: clamp(2.5rem, 4.9vw, 4.6rem);
+  line-height: 0.98;
+  max-width: 12em;
+}
+
+.panel h2 {
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  line-height: 1.02;
+}
+
+.lede {
+  margin-top: 1.4rem;
+  max-width: 36rem;
+  font-size: clamp(1.05rem, 1.25vw, 1.2rem);
+  color: rgba(241, 238, 255, 0.92);
+}
+
+.where {
+  margin-top: 0.6rem;
+  font-weight: 500;
+  color: var(--mist);
+}
+
+.panel > p:not(.where):not(.lede):not(.coach):not(.panel-links):not(.hero-actions) {
+  margin-top: 1rem;
+  color: rgba(241, 238, 255, 0.92);
+}
+
+.steps {
+  margin-top: 1rem;
+  counter-reset: step;
+  display: grid;
+  gap: 0.6rem;
+}
+.steps li {
+  counter-increment: step;
+  position: relative;
+  padding-left: 2.2rem;
+  color: rgba(241, 238, 255, 0.9);
+}
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0.1rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--saffron);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.steps strong {
+  color: var(--paper);
+  font-weight: 600;
+}
+
+/* The line that ties each stop back to coaching. */
+.coach {
+  margin-top: 1.15rem;
+  padding: 0.1rem 0 0.1rem 1rem;
+  border-left: 3px solid var(--saffron);
+  color: var(--paper);
+}
+.coach span {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--saffron);
+}
+
+.panel-links {
+  margin-top: 1rem;
+  font-weight: 500;
+}
+.panel-links a {
+  text-decoration-color: var(--saffron);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3em;
+}
+.panel-links a:hover {
+  color: var(--saffron);
+}
+
+.hero-actions {
+  margin-top: 1.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1.1rem;
+}
+.hint {
+  color: var(--mist);
+  font-size: 0.95rem;
+}
+
+.button {
+  display: inline-block;
+  padding: 0.8rem 1.25rem;
+  border-radius: 0.65rem;
+  border: 1.5px solid var(--saffron);
+  background: var(--saffron);
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    transform 150ms ease,
+    background-color 150ms ease;
+}
+.button:hover {
+  transform: translateY(-2px);
+  background: #ffc552;
+}
+.button-quiet {
+  background: transparent;
+  color: var(--paper);
+  border-color: rgba(241, 238, 255, 0.55);
+}
+.button-quiet:hover {
+  background: rgba(241, 238, 255, 0.12);
+}
+
+/* ------------------------------------------------------------------
+   Route map
+   ------------------------------------------------------------------ */
+.map {
+  position: fixed;
+  z-index: 15;
+  right: calc(var(--gutter) * 0.55);
+  top: 50%;
+  transform: translateY(-50%);
+  transition: opacity 250ms ease;
+}
+.map.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.map ol {
+  position: relative;
+}
+.map ol::before,
+.map ol::after {
+  content: '';
+  position: absolute;
+  right: 5px;
+  top: 0.875rem;
+  width: 2px;
+  height: calc(100% - 1.75rem);
+  background: rgba(241, 238, 255, 0.24);
+}
+.map ol::after {
+  background: var(--saffron);
+  transform-origin: top;
+  transform: scaleY(var(--done));
+  transition: transform 300ms ease;
+}
+.map a {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  height: 1.75rem;
+  text-decoration: none;
+}
+/* Only the current stop is named; the rest appear when the map is hovered or focused. */
+.map-label {
+  padding: 0.12rem 0.55rem;
+  border-radius: 0.4rem;
+  font-size: 0.8rem;
+  color: rgba(241, 238, 255, 0.85);
+  background: rgba(17, 13, 49, 0.78);
+  opacity: 0;
+  transition: opacity 200ms ease;
+  white-space: nowrap;
+}
+.map:hover .map-label,
+.map:focus-within .map-label,
+.map .is-here .map-label {
+  opacity: 1;
+}
+.map-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--periwinkle);
+  background: var(--ink);
+  transition:
+    background-color 200ms ease,
+    box-shadow 200ms ease;
+}
+.map .is-passed .map-dot {
+  background: var(--saffron);
+  border-color: var(--saffron);
+}
+.map .is-here .map-dot {
+  background: var(--saffron);
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 5px rgba(255, 182, 39, 0.28);
+}
+.map .is-here .map-label,
+.map a:hover .map-label {
+  color: var(--paper);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------
+   Below the ride: lavender paper
+   ------------------------------------------------------------------ */
+.paper {
+  --focus: var(--violet);
+  position: relative;
+  z-index: 4;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.sheet {
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: clamp(4rem, 9vw, 7rem) var(--gutter) 0;
+}
+.sheet:last-of-type {
+  padding-bottom: clamp(4rem, 9vw, 7rem);
+}
+
+.sheet-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 2rem;
+  margin-bottom: 2rem;
+}
+.sheet-head h2 {
+  font-size: clamp(2.4rem, 5.4vw, 4.4rem);
+  line-height: 1;
+}
+.sheet-head p {
+  max-width: 34rem;
+  color: #463f80;
+}
+
+.group {
+  display: grid;
+  grid-template-columns: minmax(12rem, 17rem) 1fr;
+  gap: 1.5rem 3rem;
+  padding: 1.5rem 0 2.4rem;
+  border-top: 2px solid var(--ink);
+}
+.group-head {
+  align-self: start;
+  position: sticky;
+  top: 5.5rem;
+}
+.group-head h3 {
+  font-size: 1.45rem;
+  line-height: 1.1;
+}
+.group-head p {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: #463f80;
+}
+
+.repos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.3rem 2.5rem;
+}
+.repos a {
+  font-weight: 600;
+  text-decoration-color: var(--periwinkle);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+  overflow-wrap: anywhere;
+}
+.repos a:hover {
+  color: var(--violet);
+  text-decoration-color: var(--violet);
+}
+.repo-tech {
+  margin-left: 0.6rem;
+  font-size: 0.82rem;
+  color: var(--violet);
+}
+.repos p {
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+  color: #39336e;
+}
+
+.rows li {
+  display: grid;
+  grid-template-columns: minmax(8rem, 17rem) 1fr;
+  gap: 0.4rem 3rem;
+  padding: 1.3rem 0;
+  border-top: 1px solid rgba(23, 19, 58, 0.2);
+}
+.rows li:first-child {
+  border-top: 2px solid var(--ink);
+}
+.row-side {
+  color: var(--violet);
+  font-weight: 500;
+}
+.row-side strong {
+  font-weight: 600;
+}
+.rows h3 {
+  font-size: 1.3rem;
+  line-height: 1.15;
+}
+.row-meta {
+  font-weight: 500;
+  color: var(--violet);
+}
+.rows div p:last-child {
+  margin-top: 0.4rem;
+  max-width: 44rem;
+  color: #39336e;
+}
+
+.kit {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2rem;
+  padding: 1.5rem 0 2rem;
+  border-top: 2px solid var(--ink);
+}
+.kit-facts {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top-width: 1px;
+  border-top-color: rgba(23, 19, 58, 0.2);
+}
+.kit h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.6rem;
+}
+.kit li {
+  padding: 0.18rem 0;
+  color: #39336e;
+}
+
+.contact {
+  --focus: var(--saffron);
+  padding: clamp(4.5rem, 10vw, 8rem) var(--gutter) 3rem;
+  background: var(--ink);
+  color: var(--paper);
+}
+.contact h2 {
+  font-size: clamp(2.5rem, 6.4vw, 5.4rem);
+  line-height: 0.98;
+  max-width: 11em;
+}
+.contact > p {
+  margin-top: 1.4rem;
+  max-width: 38rem;
+  color: rgba(241, 238, 255, 0.9);
+}
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 2rem !important;
+}
+.contact-links .button {
+  overflow-wrap: anywhere;
+}
+.colophon {
+  margin-top: 4rem !important;
+  font-size: 0.88rem;
+  color: var(--mist) !important;
+}
+
+/* ------------------------------------------------------------------
+   Smaller screens
+   ------------------------------------------------------------------ */
+@media (max-width: 1180px) {
+  /* The route map becomes a row of dots along the bottom edge. */
+  .map {
+    inset: auto 0 0 0;
+    transform: none;
+    padding: 0.55rem var(--gutter) calc(0.55rem + env(safe-area-inset-bottom));
+    background: linear-gradient(0deg, rgba(17, 13, 49, 0.92), rgba(17, 13, 49, 0));
+  }
+  .map ol {
+    display: flex;
+    justify-content: space-between;
+  }
+  .map ol::before,
+  .map ol::after {
+    left: 0;
+    right: auto;
+    top: 50%;
+    width: 100%;
+    height: 2px;
+    margin-top: -1px;
+  }
+  .map ol::after {
+    transform-origin: left;
+    transform: scaleX(var(--done));
+  }
+  .map a {
+    width: 1.5rem;
+    height: 1.5rem;
+    justify-content: center;
+  }
+  .map-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 899px) {
+  .scrim {
+    background: linear-gradient(0deg, rgba(17, 13, 49, 0.96) 0%, rgba(17, 13, 49, 0.82) 36%, rgba(17, 13, 49, 0) 66%);
+  }
+  .stop {
+    padding: 5rem var(--gutter) 4.2rem;
+  }
+  /* On a narrow screen the words sit on top of the scene, so they get their own backing. */
+  .panel {
+    margin: 0 -0.5rem;
+    padding: 1.1rem 1.1rem 1.2rem;
+    border-radius: 1rem;
+    background: rgba(17, 13, 49, 0.74);
+    backdrop-filter: blur(8px);
+  }
+  .top-links a:not(.top-cta) {
+    display: none;
+  }
+  .group,
+  .rows li {
+    grid-template-columns: 1fr;
+  }
+  .group-head {
+    position: static;
+  }
+  .repos {
+    grid-template-columns: 1fr;
+  }
+  .kit,
+  .kit-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  body {
+    font-size: 1rem;
+  }
+  .kit,
+  .kit-facts {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  .stage,
+  .scrim,
+  .backdrop,
+  .map,
+  .top {
+    display: none;
+  }
+  .stop {
+    min-height: 0;
+    padding: 1rem 0;
+  }
+  .panel {
+    opacity: 1;
+  }
+  body {
+    color: #000;
+    background: #fff;
+  }
+}

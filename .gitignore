@@ -1,0 +1,10 @@
+node_modules
+dist
+.vite
+*.log
+.DS_Store
+.env
+.env.*
+.claude
+# The published copy of the CV lives in public/
+/Abhishek_Kumar_CV.pdf
