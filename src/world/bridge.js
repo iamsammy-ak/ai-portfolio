@@ -13,7 +13,7 @@ const state = () => {
 // The original loader registers Start after its CSS transition. Keep that animation alive,
 // then expose readiness to the parent. No fabricated loading percentage.
 world.subscribe(s => s.scene_loaded_after_progress, ready => {
-  if (ready) setTimeout(() => { canEnter = true; enter(); send({ type: 'ready', ...state() }) }, 1800)
+  if (ready) setTimeout(() => { canEnter = true; send({ type: 'ready', ...state() }) }, 1800)
 }, { fireImmediately: true })
 world.subscribe(s => s.country, () => send({ type: 'state', ...state() }))
 scroll.subscribe(s => s.scroll, () => {
@@ -61,3 +61,47 @@ window.addEventListener('error', event => send({ type: 'error', message: event.m
 window.addEventListener('unhandledrejection', () => send({ type: 'error', message: 'World asset failed to load.' }))
 document.addEventListener('webglcontextlost', () => send({ type: 'error', message: 'Graphics context lost.' }), true)
 send({ type: 'loading' })
+
+// Native Start keeps the reference opening and loading sequence.
+document.querySelector('.button-start')?.addEventListener('click', () => {
+  entered = true
+  send({ type: 'state', ...state() })
+})
+// Keep the original navigation visually intact while making it keyboard operable.
+function labelControls() {
+  document.querySelectorAll('.burger-wrapper,.sound,.contactButton').forEach(item => {
+    if (item.hasAttribute('role')) return
+    item.setAttribute('role', 'button')
+    item.setAttribute('tabindex', '0')
+    item.setAttribute('aria-label', item.classList.contains('burger-wrapper') ? 'Menu' : item.classList.contains('sound') ? 'Toggle sound' : item.querySelector('p')?.textContent || 'Contact')
+    item.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); item.click() }
+    })
+  })
+  document.querySelectorAll('.ui-nav li[data-title]').forEach(item => {
+    if (item.hasAttribute('role')) return
+    item.setAttribute('role', 'button')
+    item.setAttribute('tabindex', '0')
+    item.setAttribute('aria-label', item.dataset.title)
+    item.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); item.click() }
+    })
+  })
+  document.querySelectorAll('.portfolio-item').forEach(item => {
+    const link = item.querySelector('a:not(.mobile)')
+    if (link) { link.setAttribute('aria-label', 'View ' + item.querySelector('h3')?.textContent + ' on GitHub'); link.rel = 'noopener noreferrer' }
+  })
+}
+new MutationObserver(labelControls).observe(document.getElementById('root'), { childList: true, subtree: true })
+labelControls()
+window.addEventListener('keydown', event => {
+  if (!entered || event.target.closest('a,button,[role=button]')) return
+  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+    event.preventDefault()
+    const s = scroll.getState(), handler = s.scrollHandler
+    if (handler && !s.disableScroll && !world.getState().transition) {
+      world.setState({ mobileJoystickActive: false }); handler.active = true
+      handler.deltaY = Math.max(0, Math.min(s.scroll_path_length, handler.deltaY + (event.key === 'ArrowUp' ? -1600 : 1600)))
+    }
+  }
+})

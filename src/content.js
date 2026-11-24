@@ -2,7 +2,7 @@
 
 export const person = {
   "name": "Abhishek Kumar",
-  "role": "Computer engineer, building with AI",
+  "role": "Computer engineer",
   "location": "Turin, Italy",
   "email": "kumarabhishekk363@gmail.com",
   "links": {
@@ -86,60 +86,8 @@ export const certificates = [
 ]
 
 export const toolkit = [
-  {
-    "title": "AI",
-    "items": [
-      "LLM applications and agents",
-      "Retrieval (RAG)",
-      "Prompt design",
-      "Evaluation",
-      "Model Context Protocol",
-      "OpenRouter",
-      "Ollama",
-      "ChatGPT",
-      "Claude Code"
-    ]
-  },
-  {
-    "title": "Microsoft",
-    "items": [
-      "Microsoft 365 Copilot",
-      "Copilot Studio",
-      "Power Platform",
-      "Power BI and DAX",
-      "Power Automate",
-      "SQL Server",
-      "Microsoft Project",
-      "Excel"
-    ]
-  },
-  {
-    "title": "Engineering and data",
-    "items": [
-      "Python",
-      "SQL",
-      "PostgreSQL",
-      "TypeScript",
-      "React",
-      "Docker",
-      "MATLAB"
-    ]
-  },
-  {
-    "title": "Working with people",
-    "items": [
-      "AI coaching and training",
-      "Client training",
-      "Public speaking",
-      "Project management",
-      "Market research",
-      "JIRA, Notion, Figma"
-    ]
-  }
+  { title: 'Technical', items: ['Python', 'AI/ML', 'MATLAB', 'SQL', 'Docker', 'Power BI'] },
+  { title: 'Business', items: ['Market research', 'Project management', 'Startup research', 'Public speaking', 'Entrepreneurship'] },
+  { title: 'Tools', items: ['JIRA', 'Trello', 'Notion', 'Asana', 'Figma'] },
 ]
-
-export const languages = [
-  "Hindi, native",
-  "English, professional",
-  "Italian, beginner"
-]
+export const languages = ['Hindi, native', 'English, professional', 'Italian, beginner']

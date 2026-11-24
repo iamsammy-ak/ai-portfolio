@@ -1,8 +1,7 @@
-/* Content is supplied by the accessible parent app; the embedded document supplies the original scene. */
-html, body { margin: 0; overflow: hidden; width: 100%; height: 100%; }
-#preloader { opacity: 0; pointer-events: none !important; }
-#awards, .__html, .ui-nav, .main-title, .cursor-scroll, .joystick,
-.popup, .portfolio-item, .credits, .fr-text { visibility: hidden !important; pointer-events: none !important; }
-.skills-HUD { visibility: visible !important; pointer-events: none !important; }
-.skills-HUD h3 { font-family: sans-serif; }
-canvas { outline: none; }
+/* The original loader, navigation, typography and scene UI remain intact. */
+@font-face{font-family:'Zen Dots';font-style:normal;font-weight:400;font-display:swap;src:url('../zen-dots.ttf') format('truetype')}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+#awards{display:none!important}
+.ui-nav li:focus-visible,a:focus-visible,.contactButton:focus-visible{outline:2px solid white;outline-offset:6px}
+.fr-text-content a{color:inherit;text-decoration:underline}
+canvas{outline:none}
